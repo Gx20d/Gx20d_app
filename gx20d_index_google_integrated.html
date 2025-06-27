@@ -1,0 +1,75 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GX20D Gaming - Admin Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+</head>
+<body class="bg-black text-white font-sans">
+
+  <!-- Splash + Google Login -->
+  <div id="splash-screen" class="flex flex-col justify-center items-center h-screen">
+    <div class="text-center space-y-6">
+      <div class="text-3xl font-bold">GX20D Gaming</div>
+      <p class="text-gray-400">Sign in with Google to access the Dashboard</p>
+      <button onclick="googleSignIn()" class="bg-white text-black font-bold py-2 px-4 rounded hover:scale-105 transition flex items-center gap-2">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5">
+        Sign in with Google
+      </button>
+    </div>
+  </div>
+
+  <!-- Main App Interface -->
+  <div id="main-app" class="hidden min-h-screen">
+    <header class="bg-gray-900 text-white p-4 flex justify-between items-center">
+      <h1 class="text-xl font-bold">Welcome, <span id="user-name"></span></h1>
+      <button onclick="logout()" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded">Logout</button>
+    </header>
+    <main class="p-4">
+      <p>Your email: <span id="user-email"></span></p>
+      <img id="user-pic" class="w-24 h-24 rounded-full mt-4" src="">
+    </main>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBmdmBnOTxrkUQZuXXs9rF9xi4USkvlMTA",
+      authDomain: "gx20d-gaming-app.firebaseapp.com",
+      projectId: "gx20d-gaming-app",
+      appId: "1:361014333797:web:be2d037c35638e0852918c"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    function googleSignIn() {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider)
+        .then((result) => {
+          const user = result.user;
+          document.getElementById('user-name').textContent = user.displayName;
+          document.getElementById('user-email').textContent = user.email;
+          document.getElementById('user-pic').src = user.photoURL;
+          document.getElementById('splash-screen').style.display = 'none';
+          document.getElementById('main-app').classList.remove('hidden');
+        })
+        .catch((error) => {
+          console.error("Login error:", error);
+          alert("Google Login Failed");
+        });
+    }
+
+    function logout() {
+      auth.signOut().then(() => {
+        document.getElementById('main-app').classList.add('hidden');
+        document.getElementById('splash-screen').style.display = 'flex';
+      });
+    }
+  </script>
+</body>
+</html>
